@@ -1,4 +1,3 @@
-
 class Person:
     def __init__(self, name):
         self.name = name
@@ -6,27 +5,28 @@ class Person:
 
 class Student(Person):
     def __init__(self, name):
-        super().__init__(name)  # call parent constructor
-        self.marks = {"English": 0, "Urdu": 0, "Math": 0}
+        super().__init__(name)
+        self.__marks = {"English": 0, "Urdu": 0, "Math": 0}
 
     def add_marks(self):
-        for subject in self.marks:
+        for subject in self.__marks:
             while True:
                 try:
-                    m = int(input(f"Enter marks for {subject} (0-100): "))
-                    if 0 <= m <= 100:
-                        self.marks[subject] = m
+                    marks = int(input(f"Enter marks for {subject} (0-100): "))
+                    if 0 <= marks <= 100:
+                        self.__marks[subject] = marks
                         break
                     else:
-                        print("Marks must be 0-100")
-                except:
+                        print("Marks must be between 0 and 100")
+                except ValueError:
                     print("Invalid input!")
 
-    def average(self):
-        return sum(self.marks.values()) / len(self.marks)
+    # private method
+    def __average(self):
+        return sum(self.__marks.values()) / len(self.__marks)
 
     def grade(self):
-        avg = self.average()
+        avg = self.__average()
         if avg >= 90:
             return "A"
         elif avg >= 75:
@@ -37,11 +37,15 @@ class Student(Person):
             return "Fail"
 
     def show(self):
-        print(f"\nName: {self.name}")
-        print(f"Marks: {self.marks}")
-        print(f"Average: {self.average():.2f}")
-        print(f"Grade: {self.grade()}")
+        print("\n--- Student Info ---")
+        print(f"Name: {self.name}")
+        print("Marks:")
 
+        for subject, marks in self.__marks.items():
+            print(f"  {subject}: {marks}")
+
+        print(f"Average: {self.__average():.2f}")
+        print(f"Grade: {self.grade()}")
 
 
 students = []
@@ -52,19 +56,23 @@ while True:
     print("3. Exit")
 
     choice = input("Enter choice: ")
+
     if choice == "1":
         name = input("Enter name: ")
-        s = Student(name)
-        s.add_marks()
-        students.append(s)
+        student = Student(name)
+        student.add_marks()
+        students.append(student)
         print(f"{name} added successfully!")
+
     elif choice == "2":
         if not students:
             print("No students yet.")
-        for s in students:
-            s.show()
+        for student in students:
+            student.show()
+
     elif choice == "3":
         print("Exiting...")
         break
+
     else:
         print("Invalid choice!")
